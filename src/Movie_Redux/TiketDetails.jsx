@@ -1,24 +1,25 @@
 import React from "react";
-import { useSelector,  useDispatch} from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 const TiketDetails = () => {
-  const { selectedChair } = useSelector((state) => state.movie);
+  const { selectedChair, choosingChair } = useSelector((state) => state.movie);
   const dispatch = useDispatch();
   if (!selectedChair) {
     return null;
   }
-  
+  console.log(choosingChair);
   const handleDelete = (chairName) => {
     dispatch({
       type: "deleteChair",
-      chairName
+      chairName,
     });
   };
 
-  const handleTicket = (chair)=>{
+  const handleTicket = () => {
     dispatch({
-      type:"handleTicket"
-    })
-  }
+      type: "handleTicket",
+      payload: selectedChair,
+    });
+  };
   return (
     <table className="table">
       <thead>
@@ -31,18 +32,29 @@ const TiketDetails = () => {
       <tbody>
         {selectedChair.map((chair) => {
           return (
-            <tr>
+            <tr key={chair.name}>
               <td>{chair.name}</td>
               <td>{chair.price}</td>
               <td>
-                <button className="btn btn-danger" onClick={()=>handleDelete(chair.name)}>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(chair.name)}
+                >
                   x
                 </button>
               </td>
             </tr>
           );
         })}
-        <button className="btn btn-success" onClick={()=>handleTicket()}>Đặt vé</button>
+        <tr>
+          <td>
+            <p>Tổng tiền</p>
+          </td>
+          <td>{choosingChair}</td>
+        </tr>
+        <button className="btn btn-success" onClick={handleTicket}>
+          Đặt vé
+        </button>
       </tbody>
     </table>
   );

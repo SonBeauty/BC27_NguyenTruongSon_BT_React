@@ -18,7 +18,6 @@ const H3El = styled.div`
   line-height: 80px;
   font-size: 30px;
   font-weight: bold;
-
 `;
 
 const MovieTicketList = () => {
@@ -45,12 +44,15 @@ const MovieTicketList = () => {
                       (ticket) => seat.name === ticket.name
                     );
                     console.log(index);
-                    if(seat.booked === true){
-                      return(
-                        <button style={{ background: "green" }}>
+                    if (seat.booked === true) {
+                      return (
+                        <button
+                          className="p-2 ms-3 translate-middle"
+                          style={{ background: "green" }}
+                        >
                           {seat.name}
                         </button>
-                      )
+                      );
                     }
                     if (index === -1) {
                       return (

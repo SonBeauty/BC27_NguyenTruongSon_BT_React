@@ -13,8 +13,8 @@ const initialState = {
                 { "name": "A8", "price": 75000, "booked": false },
                 { "name": "A9", "price": 75000, "booked": false },
                 { "name": "A10", "price": 75000, "booked": false },
-                { "name": "A11", "price": 75000, "booked": true },
-                { "name": "A12", "price": 75000, "booked": true }
+                { "name": "A11", "price": 75000, "booked": false },
+                { "name": "A12", "price": 75000, "booked": false }
             ]
         },
         {
@@ -172,7 +172,7 @@ const initialState = {
         }
     ],
     selectedChair: [],
-    choosingChair: []
+    choosingChair: 0
 }
 
 const movieReducer = (state = initialState, action) => {
@@ -185,8 +185,11 @@ const movieReducer = (state = initialState, action) => {
             } else {
                 cloneSelectChair.splice(index, 1);
             }
+            console.log(cloneSelectChair);
+            const totalMoney = cloneSelectChair.reduce((total, value) => total = total + value.price, 0)
+            console.log(totalMoney)
 
-            return { ...state, selectedChair: cloneSelectChair }
+            return { ...state, selectedChair: cloneSelectChair, choosingChair:totalMoney }
             // const index = state.selectedChair.findIndex((chair) => chair.name === action.chair.name)
             // if (index === -1) {
             //     const newChosingChair = [...state.selectedChair, { ...action.chair }, { ...state.selectedChair, booked: !state.selectedChair.booked }]
@@ -197,19 +200,37 @@ const movieReducer = (state = initialState, action) => {
         case "deleteChair": {
             const newSelectedChair = state.selectedChair.filter((item) => item.name !== action.chairName)
             console.log(action.chairName)
-            return { ...state, selectedChair: newSelectedChair }
+            const totalMoney = newSelectedChair.reduce((total, value) => total = total + value.price, 0)
+            return { ...state, selectedChair: newSelectedChair, choosingChair:totalMoney }
         }
 
-        case "hanleTicket":{
-            const ticket = [...state.chairs]
-            const index = ticket.findIndex((ticket)=>ticket.row===action.ticket.row)
+        case "handleTicket": {
+            const cloneTicket = [...state.chairs];
+            for (let i = 0; i < action.payload.length; i++) {
+                const indexRow = cloneTicket.findIndex(item => item.row === action.payload[i].name.substr(0, 1));
+                if (indexRow !== -1) {
+                    const indexItem = cloneTicket[indexRow].seats.findIndex(item => item.name === action.payload[i].name);
+                    console.log(indexItem)
+                    if (indexItem !== -1) {
+                        console.log(indexItem)
+                        cloneTicket[indexRow].seats[indexItem].booked = true;
 
-            const foundIndex = ticket[index].seats.findIndex((seat)=> seat.name===action.ticket.name)
-            ticket[index].seats[foundIndex].booked = true
-            console.log(ticket);
-            return{...state, chairs:ticket}
+                    }
+                }
 
-            
+            }
+
+            return { ...state, chairs: cloneTicket, selectedChair: [], choosingChair:0  }
+
+            // const ticket = [...state.chairs]
+            // const index = ticket.findIndex((ticket)=>ticket.row===action.ticket.row)
+
+            // const foundIndex = ticket[index].seats.findIndex((seat)=> seat.name===action.ticket.name)
+            // ticket[index].seats[foundIndex].booked = true
+            // console.log(ticket);
+            // return{...state, chairs:ticket}
+
+
         }
 
         default:
